@@ -13,6 +13,9 @@ namespace Billie\BilliePayment\Components\Checkout\Subscriber;
 
 use Billie\BilliePayment\Components\Checkout\Service\WidgetService;
 use Billie\BilliePayment\Components\PaymentMethod\Util\MethodHelper;
+use Billie\Sdk\Exception\BillieException;
+use Billie\Sdk\Exception\Validation\InvalidFieldValueCollectionException;
+use Billie\Sdk\Exception\Validation\InvalidFieldValueException;
 use RuntimeException;
 use Shopware\Core\Framework\Struct\ArrayStruct;
 use Shopware\Storefront\Page\Account\Order\AccountEditOrderPageLoadedEvent;
@@ -43,19 +46,28 @@ class CheckoutSubscriber implements EventSubscriberInterface
 
         $paymentMethod = $event->getSalesChannelContext()->getPaymentMethod();
         if (MethodHelper::isBilliePayment($paymentMethod) && $event->getPage()->getPaymentMethods()->has($paymentMethod->getId())) {
-            if ($event instanceof CheckoutConfirmPageLoadedEvent) {
-                $widgetData = $this->widgetService->getWidgetDataBySalesChannelContext($event->getSalesChannelContext());
-            } elseif ($event instanceof AccountEditOrderPageLoadedEvent) {
-                $widgetData = $this->widgetService->getWidgetDataByOrder($event->getPage()->getOrder(), $event->getSalesChannelContext());
-            } else {
-                throw new RuntimeException('invalid event: ' . gettype($event));
+            /** @var ArrayStruct $extension */
+            $extension = $event->getPage()->getExtension('billie_payment') ?? new ArrayStruct();
+
+            try {
+                if ($event instanceof CheckoutConfirmPageLoadedEvent) {
+                    $widgetData = $this->widgetService->getWidgetDataBySalesChannelContext($event->getSalesChannelContext());
+                } elseif ($event instanceof AccountEditOrderPageLoadedEvent) {
+                    $widgetData = $this->widgetService->getWidgetDataByOrder($event->getPage()->getOrder(), $event->getSalesChannelContext());
+                } else {
+                    throw new RuntimeException('invalid event: ' . gettype($event));
+                }
+
+                if ($widgetData instanceof ArrayStruct) {
+                    $extension->set('widget', $widgetData->all());
+                }
+            } catch (InvalidFieldValueCollectionException $invalidFieldValueCollectionException) {
+                $extension->set('errors', array_map(static fn (InvalidFieldValueException $e): string => $e->getMessage(), $invalidFieldValueCollectionException->getErrors()));
+            } catch (BillieException $billieException) {
+                $extension->set('errors', [$billieException->getMessage()]);
             }
 
-            if ($widgetData instanceof ArrayStruct) {
-                /** @var ArrayStruct $extension */
-                $extension = $event->getPage()->getExtension('billie_payment') ?? new ArrayStruct();
-                $extension->set('widget', $widgetData->all());
-
+            if ($extension->all() !== []) {
                 $event->getPage()->addExtension('billie_payment', $extension);
             }
         }

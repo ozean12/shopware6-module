@@ -1,6 +1,24 @@
 {% sw_extends '@Storefront/storefront/page/checkout/confirm/index.html.twig' %}
 
-{% block page_checkout_confirm_form_submit %}
+{% block page_checkout_confirm_alerts %}
     {{ parent() }}
+
+    {% block page_checkout_confirm_billie_alerts %}
+        {% if page.extensions.billie_payment and page.extensions.billie_payment.errors %}
+            {% for error in page.extensions.billie_payment.errors %}
+                {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                    type: 'danger',
+                    content: error
+                } %}
+            {% endfor %}
+        {% endif %}
+    {% endblock %}
+{% endblock %}
+
+{% block page_checkout_confirm_form_submit %}
+    {% if not page.extensions.billie_payment or not page.extensions.billie_payment.errors %}
+        {{ parent() }}
+    {% endif %}
+
     {% sw_include '@BilliePayment/storefront/billie-payment/hidden-input-field.html.twig' %}
 {% endblock %}
