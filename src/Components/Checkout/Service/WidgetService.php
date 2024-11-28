@@ -148,21 +148,20 @@ class WidgetService
                     ->setGross($price->getTotalPrice())
                     ->setNet($price->getNetPrice())
                     ->setTax($price->getCalculatedTaxes()->getAmount())
-                    ->toArray(false),
+                    ->toArray(),
                 'duration' => $billieConfig->getDuration(),
                 'debtor_company' => (new DebtorCompany())
                     ->setName($billingAddress->getCompany())
                     ->setAddress(AddressHelper::createAddress($billingAddress))
-                    ->toArray(false),
-                'delivery_address' => AddressHelper::createAddress($shippingAddress)->toArray(false),
+                    ->toArray(),
+                'delivery_address' => AddressHelper::createAddress($shippingAddress)->toArray(),
                 'debtor_person' => (new Person())
-                    ->setValidateOnSet(false)
                     ->setSalutation($this->configService->getSalutation($salutation))
                     ->setFirstname($customer->getFirstName())
                     ->setLastname($customer->getLastName())
                     ->setPhone($billingAddress->getPhoneNumber())
                     ->setMail($customer->getEmail())
-                    ->toArray(false),
+                    ->toArray(),
                 'line_items' => $this->getLineItems($lineItems, $salesChannelContext->getContext()),
             ],
         ]);
@@ -206,11 +205,13 @@ class WidgetService
     protected function getLineItem($lineItem, Context $context): LineItem
     {
         $amount = (new Amount())
+            ->setValidateOnSet(false)
             ->setGross($lineItem->getPrice()->getTotalPrice())
             ->setTax($lineItem->getPrice()->getCalculatedTaxes()->getAmount());
         $amount->setNet($amount->getGross() - $amount->getTax());
 
         $billieLineItem = (new LineItem())
+            ->setValidateOnSet(false)
             ->setExternalId($lineItem->getId())
             ->setTitle($lineItem->getLabel())
             ->setQuantity($lineItem->getQuantity())
