@@ -9,12 +9,13 @@
             <template v-if="!isLoading">
 
                 {% block billie_payment_config_fields %}
-                    <sw-field
+                    <sw-number-field
                         type="number"
                         :label="$tc('billie.paymentConfig.fields.duration.label')"
-                        v-model="paymentMethod.extensions.billieConfig.duration"
-                        min="1">
-                    </sw-field>
+                        v-model:value="paymentMethod.extensions.billieConfig.duration"
+                        numberType="int"
+                        min="1"
+                    ></sw-number-field>
                 {% endblock %}
             </template>
         </sw-card>

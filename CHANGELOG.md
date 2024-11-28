@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [WIP]
 
 - checkout: display validation issues for widget-data instead of throwing exception
+- fix display duration in payment-method settings
 
 ## [3.1.0] - 2024-10-09
 
