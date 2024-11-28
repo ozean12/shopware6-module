@@ -32,18 +32,18 @@ class PaymentMethods extends AbstractBootstrap
     public const PAYMENT_METHODS = [
         PaymentHandler::class => [
             'handlerIdentifier' => PaymentHandler::class,
-            'name' => 'Billie Invoice',
+            'name' => 'Pay Later for businesses',
             'description' => 'Pay comfortably and securely on invoice - within {duration} days after receiving the goods.',
             'afterOrderEnabled' => false,
             'technicalName' => 'billie_invoice',
             'translations' => [
                 'de-DE' => [
-                    'name' => 'Billie Rechnungskauf',
-                    'description' => 'Bezahlen Sie bequem und sicher auf Rechnung - innerhalb von {duration} Tagen nach Erhalt der Ware.',
+                    'name' => 'Kauf auf Rechnung für Firmenkunden',
+                    'description' => 'Jetzt kaufen, erst in {duration} Tagen bezahlen, Ohne zusätzliche Kosten, Keine Registrierung erforderlich, Die führende B2B-Lösung in Europa',
                 ],
                 'en-GB' => [
-                    'name' => 'Billie Invoice',
-                    'description' => 'Pay comfortably and securely on invoice - within {duration} days after receiving the goods.',
+                    'name' => 'Pay Later for businesses',
+                    'description' => "Pay after {duration} days, Interest-free, No registration needed, Europe's go-to B2B payment solution",
                 ],
             ],
             PaymentMethodExtension::EXTENSION_NAME => [
