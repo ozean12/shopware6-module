@@ -1,0 +1,10 @@
+{% sw_extends '@Storefront/storefront/page/account/index.html.twig' %}
+
+{% block page_account_overview_payment_content %}
+    {% if context.customer.defaultPaymentMethod and context.customer.defaultPaymentMethod.extensions and context.customer.defaultPaymentMethod.extensions.billieConfig !== null %}
+        <strong>{{ context.customer.defaultPaymentMethod.translated.name }}</strong>
+        <p>{{ context.customer.defaultPaymentMethod.description|replace({'{duration}': context.customer.defaultPaymentMethod.extensions.billieConfig.duration}) }}</p>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
