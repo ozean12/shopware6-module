@@ -1,32 +1,36 @@
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - '*'
-      - '*/*'
+    workflow_dispatch:
+    push:
+        branches:
+            - '*'
+            - '*/*'
 
 permissions:
-  contents: read
+    contents: read
 
 jobs:
-  build:
-    name: Build installable packages
-    runs-on: ubuntu-latest
+    build:
+        name: Build installable packages
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+        steps:
+            -   uses: actions/checkout@v3
 
-      - uses: actions/setup-go@v4
+            -   uses: actions/setup-go@v5
+                with:
+                    go-version: "1.23"
+                    cache: true
+                    check-latest: true
 
-      - run: go install github.com/FriendsOfShopware/shopware-cli@latest
+            -   run: go install github.com/FriendsOfShopware/shopware-cli@0.4.59
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+            -   uses: actions/setup-node@v3
+                with:
+                    node-version: '18'
 
-      - run: shopware-cli extension zip . --disable-git --release
+            -   run: shopware-cli extension zip . --disable-git --release
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Module bundles
-          path: "*.zip"
+            -   uses: actions/upload-artifact@v3
+                with:
+                    name: Module bundles
+                    path: "*.zip"
