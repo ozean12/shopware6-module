@@ -1,7 +1,7 @@
 {
     "name": "billie/shopware6-payment-module",
     "description": "Billie payment for Shopware 6",
-    "version": "3.1.1",
+    "version": "3.1.2",
     "license": "MIT",
     "authors": [
         {
@@ -33,7 +33,7 @@
     },
     "require": {
         "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
-        "shopware/core": "~6.6.0",
+        "shopware/core": "~6.5.0",
         "billie/api-php-sdk": "^3.1"
     },
     "require-dev": {
